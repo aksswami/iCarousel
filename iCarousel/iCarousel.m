@@ -800,7 +800,12 @@ NSComparisonResult compareViewDepth(UIView *view1, UIView *view2, iCarousel *sel
     frame.origin.y = (containerView.bounds.size.height - frame.size.height) / 2.0;
     view.frame = frame;
     [containerView addSubview:view];
-    containerView.layer.opacity = 0;
+    containerView.layer.opacity = 1;
+    
+    UIView *overlayView = [[UIView alloc] initWithFrame:frame];
+    overlayView.backgroundColor = [UIColor blackColor];
+    overlayView.alpha = 0.0f;
+    [containerView addSubview:overlayView];
     
     return containerView;
 }
@@ -810,8 +815,12 @@ NSComparisonResult compareViewDepth(UIView *view1, UIView *view2, iCarousel *sel
     //calculate offset
     CGFloat offset = [self offsetForItemAtIndex:index];
     
+    //update black overlay alpha e.g. using cosine function
+    CGFloat alpha = 0.7 * cosf(M_PI_2*[self alphaForItemWithOffset:offset]);
+    [(UIView*)[view.superview.subviews lastObject] setAlpha:alpha];
+    
     //update alpha
-    view.superview.layer.opacity = [self alphaForItemWithOffset:offset];
+    view.superview.layer.opacity = 1;
 
 #ifdef ICAROUSEL_IOS
     
